@@ -4,6 +4,14 @@
     "ParameterValue": "new"
   },
   {
+    "ParameterKey": "VpcId",
+    "ParameterValue": "vpc-e3e7e298"
+  },
+  {
+    "ParameterKey": "Subnets",
+    "ParameterValue": "subnet-a9b87587,subnet-34b4ad0b"
+  },
+  {
     "ParameterKey": "OperatorEMail",
     "ParameterValue": "gagan.annamreddy@gmail.com"
   }

@@ -2,9 +2,23 @@
   "AWSTemplateFormatVersion": "2010-09-09",
 
   "Description":
-    "AWS CloudFormation to create higly available website running on linux servers. AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy the Apache web server at instance launch time",
+    "AWS CloudFormation Template to create higly available website running on linux servers. AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy the Apache web server at instance launch time",
 
   "Parameters": {
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "VpcId of your existing Virtual Private Cloud (VPC)",
+      "ConstraintDescription":
+        "must be the VPC Id of an existing Virtual Private Cloud."
+    },
+
+    "Subnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description":
+        "The list of SubnetIds in your Virtual Private Cloud (VPC)",
+      "ConstraintDescription":
+        "must be a list of at least two existing subnets associated with at least two different availability zones. They should be residing in the selected Virtual Private Cloud."
+    },
     "OperatorEMail": {
       "Description":
         "EMail address to notify if there are any scaling operations",
@@ -82,6 +96,7 @@
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties": {
         "AvailabilityZones": { "Fn::GetAZs": "" },
+        "Subnets": { "Ref": "Subnets" },
         "CrossZone": "true",
         "Listeners": [
           {
@@ -103,10 +118,10 @@
     "WebServerGroup": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
-        "AvailabilityZones": { "Fn::GetAZs": "" },
+        "VPCZoneIdentifier": { "Ref": "Subnets" },
         "LaunchConfigurationName": { "Ref": "LaunchConfig" },
         "MinSize": "2",
-        "MaxSize": "5",
+        "MaxSize": "10",
         "LoadBalancerNames": [{ "Ref": "ElasticLoadBalancer" }],
         "NotificationConfiguration": {
           "TopicARN": { "Ref": "NotificationTopic" },
